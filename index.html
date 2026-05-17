@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COREFIX | From Missed Sales to Meaningful Connections</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --dp: #3b2451;
+      --mg: #a33081;
+      --sw: #f8f9fa;
+      --bk: #1a1124;
+      --wh: #ffffff;
+      --mg-light: rgba(163,48,129,0.12);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--sw); color:#2d2d2d; line-height:1.7; }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; width:100%; z-index:1000;
+      background:var(--bk); border-bottom:2px solid var(--mg);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 5%; height:64px;
+    }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:700; color:#fff; text-decoration:none; letter-spacing:3px; }
+    .logo span { color:var(--mg); }
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; padding:4px; }
+    .hamburger span { display:block; width:24px; height:2px; background:#fff; transition:.3s; border-radius:2px; }
+    .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .nav-center { display:flex; align-items:center; gap:28px; list-style:none; }
+    .nav-center a { color:#ccc; text-decoration:none; font-size:12px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; transition:.25s; }
+    .nav-center a:hover, .nav-center a.active { color:var(--mg); }
+    .nav-right { display:flex; gap:10px; }
+    .btn-nav { font-size:11px; font-weight:600; padding:7px 16px; border-radius:4px; text-decoration:none; letter-spacing:1px; text-transform:uppercase; transition:.3s; cursor:pointer; }
+    .btn-outline { border:1px solid var(--mg); color:#fff; background:transparent; }
+    .btn-outline:hover { background:var(--mg); }
+    .btn-solid { background:var(--mg); color:#fff; border:1px solid var(--mg); }
+    .btn-solid:hover { background:var(--dp); border-color:var(--dp); }
+    @media(max-width:900px){
+      .hamburger{display:flex;}
+      .nav-center,.nav-right{
+        position:fixed;top:64px;left:0;width:100%;background:var(--bk);
+        flex-direction:column;align-items:center;padding:24px 0;gap:18px;
+        transform:translateY(-200%);transition:.35s ease;opacity:0;pointer-events:none;
+        border-bottom:2px solid var(--mg);
+      }
+      .nav-center{gap:18px;}
+      .nav-right{top:calc(64px + 230px);padding:16px 0 24px;}
+      .nav-open .nav-center,.nav-open .nav-right{transform:translateY(0);opacity:1;pointer-events:auto;}
+      .nav-center a{font-size:14px;}
+    }
+
+    /* ── PAGES ── */
+    .page { display:none; min-height:100vh; }
+    .page.active { display:block; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height:100vh; margin-top:64px;
+      background:linear-gradient(rgba(26,17,36,.72),rgba(26,17,36,.72)),
+        url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      text-align:center; padding:60px 20px;
+    }
+    .hero-tag { color:var(--mg); font-size:11px; letter-spacing:5px; text-transform:uppercase; margin-bottom:20px; }
+    .hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); color:#fff; letter-spacing:6px; line-height:1; margin-bottom:20px; }
+    .hero p { color:#ccc; font-size:clamp(1rem,2vw,1.25rem); max-width:560px; margin-bottom:40px; }
+    .hero-btns { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+    .btn { padding:14px 36px; border-radius:4px; font-weight:600; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; text-decoration:none; transition:.35s; display:inline-block; cursor:pointer; border:none; }
+    .btn-primary { background:var(--mg); color:#fff; }
+    .btn-primary:hover { background:var(--dp); }
+    .btn-ghost { border:1px solid rgba(255,255,255,.5); color:#fff; background:transparent; }
+    .btn-ghost:hover { border-color:var(--mg); color:var(--mg); }
+
+    /* stats bar */
+    .stats-bar { background:var(--dp); padding:36px 5%; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:24px; text-align:center; }
+    .stat-num { font-family:'Cormorant Garamond',serif; font-size:2.8rem; color:var(--mg); font-weight:700; }
+    .stat-lbl { color:#ccc; font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
+
+    /* ── SECTION COMMON ── */
+    .section { padding:90px 5%; }
+    .section-alt { background:#fff; }
+    .section-dark { background:var(--bk); color:#fff; }
+    .container { max-width:1100px; margin:0 auto; }
+    .section-tag { color:var(--mg); font-size:11px; letter-spacing:4px; text-transform:uppercase; margin-bottom:12px; }
+    .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3rem); color:var(--dp); margin-bottom:16px; line-height:1.2; }
+    .section-dark .section-title { color:#fff; }
+    .section-lead { color:#666; max-width:600px; margin-bottom:48px; }
+    .section-dark .section-lead { color:#bbb; }
+    .divider { width:48px; height:3px; background:var(--mg); margin:20px 0 40px; }
+
+    /* about page */
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+    .about-img { border-radius:8px; overflow:hidden; position:relative; }
+    .about-img img { width:100%; display:block; object-fit:cover; height:420px; }
+    .about-img::after { content:''; position:absolute; inset:0; border:3px solid var(--mg); transform:translate(12px,12px); border-radius:8px; pointer-events:none; }
+    .values-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-top:48px; }
+    .value-card { background:var(--mg-light); border-left:3px solid var(--mg); padding:20px 24px; border-radius:0 6px 6px 0; }
+    .value-card h4 { color:var(--dp); font-weight:600; margin-bottom:6px; }
+    .value-card p { font-size:.9rem; color:#555; }
+    @media(max-width:768px){ .about-grid{grid-template-columns:1fr;} .about-img::after{display:none;} }
+
+    /* services page */
+    .services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:28px; }
+    .service-card {
+      background:#fff; border-radius:8px; padding:36px 28px;
+      box-shadow:0 4px 24px rgba(0,0,0,.07); position:relative; overflow:hidden;
+      transition:.35s; border-bottom:3px solid transparent;
+    }
+    .service-card:hover { transform:translateY(-6px); box-shadow:0 12px 36px rgba(163,48,129,.15); border-bottom-color:var(--mg); }
+    .service-icon { font-size:2.2rem; margin-bottom:16px; }
+    .service-card h3 { color:var(--dp); font-size:1.15rem; font-weight:600; margin-bottom:10px; }
+    .service-card p { color:#666; font-size:.92rem; }
+    .service-num { position:absolute; top:20px; right:20px; font-family:'Cormorant Garamond',serif; font-size:4rem; color:rgba(163,48,129,.08); font-weight:700; line-height:1; }
+
+    /* mystery shopping */
+    .ms-hero { background:linear-gradient(135deg,var(--dp),var(--bk)); color:#fff; border-radius:12px; padding:56px 48px; margin-bottom:48px; }
+    .ms-hero h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:16px; }
+    .ms-hero p { color:#ccc; max-width:560px; }
+    .ms-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; margin:48px 0; }
+    .ms-step { text-align:center; padding:32px 20px; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.06); }
+    .step-num { width:48px; height:48px; border-radius:50%; background:var(--mg); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.1rem; margin:0 auto 16px; }
+    .ms-step h4 { color:var(--dp); margin-bottom:8px; font-weight:600; }
+    .ms-step p { font-size:.9rem; color:#666; }
+    .ms-benefits { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .benefit { display:flex; gap:14px; align-items:flex-start; padding:20px; background:var(--mg-light); border-radius:6px; }
+    .benefit-icon { font-size:1.4rem; flex-shrink:0; }
+    .benefit h4 { color:var(--dp); font-size:.95rem; font-weight:600; margin-bottom:4px; }
+    .benefit p { font-size:.85rem; color:#666; }
+    @media(max-width:600px){ .ms-hero{padding:36px 24px;} .ms-benefits{grid-template-columns:1fr;} }
+
+    /* contact page */
+    .contact-wrap { display:grid; grid-template-columns:1fr 1.4fr; gap:60px; align-items:start; }
+    .contact-info h3 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--dp); margin-bottom:16px; }
+    .contact-info p { color:#666; margin-bottom:32px; }
+    .contact-item { display:flex; gap:14px; margin-bottom:24px; }
+    .c-icon { width:44px; height:44px; border-radius:50%; background:var(--mg); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.1rem; }
+    .c-label { font-size:.8rem; color:#999; text-transform:uppercase; letter-spacing:1px; }
+    .c-val { color:#333; font-weight:500; }
+    .contact-form { background:#fff; border-radius:10px; padding:40px; box-shadow:0 8px 32px rgba(0,0,0,.08); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+    .field label { font-size:.8rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#555; }
+    .field input, .field textarea, .field select {
+      padding:12px 16px; border:1.5px solid #e0e0e0; border-radius:6px;
+      font-size:.95rem; font-family:inherit; background:#fafafa; transition:.3s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { outline:none; border-color:var(--mg); background:#fff; }
+    .field textarea { resize:vertical; min-height:120px; }
+    .form-msg { margin-top:16px; padding:14px 18px; border-radius:6px; font-weight:500; font-size:.92rem; display:none; }
+    .form-msg.success { background:rgba(37,211,102,.1); color:#1a7a3e; display:block; }
+    .form-msg.error { background:rgba(220,50,50,.1); color:#c02020; display:block; }
+    @media(max-width:800px){ .contact-wrap{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;} }
+
+    /* footer */
+    footer { background:var(--bk); color:#aaa; text-align:center; padding:32px 20px; font-size:.85rem; border-top:2px solid var(--mg); }
+    footer strong { color:var(--mg); }
+    .footer-links { display:flex; gap:20px; justify-content:center; margin-bottom:12px; flex-wrap:wrap; }
+    .footer-links a { color:#aaa; text-decoration:none; font-size:.8rem; letter-spacing:1px; text-transform:uppercase; transition:.2s; }
+    .footer-links a:hover { color:var(--mg); }
+
+    /* WA */
+    .wa {
+      position:fixed; bottom:28px; right:28px; width:56px; height:56px;
+      background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 16px rgba(0,0,0,.3); text-decoration:none; z-index:900; transition:.3s;
+    }
+    .wa:hover { transform:scale(1.1); }
+    .wa svg { width:28px; height:28px; fill:#fff; }
+
+    /* animations */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+    .page.active .hero h1,.page.active .hero p,.page.active .hero-btns,.page.active .hero-tag {
+      animation:fadeUp .6s ease both;
+    }
+    .page.active .hero-tag{animation-delay:.1s}
+    .page.active .hero h1{animation-delay:.2s}
+    .page.active .hero p{animation-delay:.35s}
+    .page.active .hero-btns{animation-delay:.5s}
+  </style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="#" class="logo" onclick="showPage('home',this)">CORE<span>FIX</span></a>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="nav-center" id="navLinks">
+    <li><a href="#" onclick="showPage('home',this)" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('about',this)">About</a></li>
+    <li><a href="#" onclick="showPage('services',this)">Services</a></li>
+    <li><a href="#" onclick="showPage('mystery',this)">Mystery Shopping</a></li>
+    <li><a href="#" onclick="showPage('contact',this)">Contact</a></li>
+  </ul>
+
+  <div class="nav-right" id="navRight">
+    <a href="#" class="btn-nav btn-outline">Client Login</a>
+    <a href="#" class="btn-nav btn-solid">Shopper Login</a>
+  </div>
+</nav>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <p class="hero-tag">Business Evaluation &amp; Mystery Shopping</p>
+    <h1>COREFIX</h1>
+    <p>From Missed Sales to Meaningful Connections — we help you see your business the way your customers do.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn btn-primary" onclick="showPage('contact')">Request a Quote</a>
+      <a href="#" class="btn btn-ghost" onclick="showPage('about')">Learn More</a>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div><div class="stat-num">500+</div><div class="stat-lbl">Evaluations Done</div></div>
+    <div><div class="stat-num">98%</div><div class="stat-lbl">Client Satisfaction</div></div>
+    <div><div class="stat-num">12+</div><div class="stat-lbl">Industries Served</div></div>
+    <div><div class="stat-num">6yr</div><div class="stat-lbl">Experience</div></div>
+  </div>
+
+  <section class="section section-alt">
+    <div class="container">
+      <p class="section-tag">What We Offer</p>
+      <h2 class="section-title">Transforming Performance<br>From the Inside Out</h2>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;">
+        <div class="service-card">
+          <div class="service-icon">📊</div>
+          <h3>Service Evaluation</h3>
+          <p>Observe real customer interactions and identify hidden performance gaps before they cost you.</p>
+          <div class="service-num">01</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🕵️</div>
+          <h3>Mystery Shopping</h3>
+          <p>Undercover assessments that reveal the true customer experience at every touchpoint.</p>
+          <div class="service-num">02</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📈</div>
+          <h3>Business Insights</h3>
+          <p>Data-driven reports with actionable recommendations to sharpen your competitive edge.</p>
+          <div class="service-num">03</div>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧠</div>
+          <h3>Feedback &amp; Research</h3>
+          <p>Deep customer sentiment analysis through structured surveys and behavioral studies.</p>
+          <div class="service-num">04</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:48px;">
+        <a href="#" class="btn btn-primary" onclick="showPage('services')">Explore All Services</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container" style="text-align:center;">
+      <p class="section-tag" style="color:var(--mg);">Ready to improve?</p>
+      <h2 class="section-title">See Your Business Through<br>Your Customers' Eyes</h2>
+      <div class="divider" style="margin:20px auto 36px;"></div>
+      <p style="color:#bbb;max-width:500px;margin:0 auto 36px;">Join hundreds of businesses that trust CoreFix to uncover gaps, boost performance, and build lasting customer loyalty.</p>
+      <a href="#" class="btn btn-primary" onclick="showPage('contact')">Start Today →</a>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<div class="page" id="page-about">
+  <section class="section" style="margin-top:64px;">
+    <div class="container">
+      <p class="section-tag">Who We Are</p>
+      <h2 class="section-title">Built on Partnership,<br>Driven by Results</h2>
+      <div class="divider"></div>
+      <div class="about-grid">
+        <div>
+          <p style="color:#555;margin-bottom:20px;">CoreFix is a smart business service platform dedicated to helping organizations understand, evaluate, and improve their overall performance. We deliver innovative solutions that focus on enhancing customer experience, identifying service gaps, and providing practical strategies to strengthen operations.</p>
+          <p style="color:#555;margin-bottom:28px;">Our approach is built on genuine partnership — your success directly reflects our success. We invest time understanding your business before prescribing any solutions.</p>
+          <a href="#" class="btn btn-primary" onclick="showPage('contact')">Work With Us</a>
+        </div>
+        <div class="about-img">
+          <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=700&q=80" alt="CoreFix team" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+        <div style="background:var(--dp);color:#fff;border-radius:10px;padding:40px 36px;">
+          <div style="font-size:2rem;margin-bottom:16px;">🎯</div>
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:#fff;margin-bottom:12px;">Our Vision</h3>
+          <p style="color:#ccc;">To become the most trusted leader in business evaluation and customer experience enhancement across the region.</p>
+        </div>
+        <div style="background:var(--mg);color:#fff;border-radius:10px;padding:40px 36px;">
+          <div style="font-size:2rem;margin-bottom:16px;">🚀</div>
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:#fff;margin-bottom:12px;">Our Mission</h3>
+          <p style="color:rgba(255,255,255,.85);">To deliver effective solutions that help businesses evaluate, improve, and grow through smart, tailored strategies and real-world insights.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="section-tag">What Guides Us</p>
+      <h2 class="section-title">Our Core Values</h2>
+      <div class="divider"></div>
+      <div class="values-grid">
+        <div class="value-card"><h4>Honesty</h4><p>We tell you the truth, even when it's hard to hear.</p></div>
+        <div class="value-card"><h4>Integrity</h4><p>Every evaluation is conducted with full ethical standards.</p></div>
+        <div class="value-card"><h4>Quality</h4><p>We never compromise on the depth or accuracy of our work.</p></div>
+        <div class="value-card"><h4>Transparency</h4><p>Clear reporting with no hidden agendas or ambiguity.</p></div>
+        <div class="value-card"><h4>Teamwork</h4><p>Collaborative by nature — internally and with our clients.</p></div>
+        <div class="value-card"><h4>Leadership</h4><p>We guide, not just report. Actionable insights, always.</p></div>
+        <div class="value-card"><h4>Responsibility</h4><p>Accountable to your business goals and your customers.</p></div>
+        <div class="value-card"><h4>Respect</h4><p>Every stakeholder — client, shopper, employee — is valued.</p></div>
+        <div class="value-card"><h4>Trust</h4><p>The foundation of every long-term client relationship we build.</p></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════ SERVICES ══════════════ -->
+<div class="page" id="page-services">
+  <section class="section" style="margin-top:64px;">
+    <div class="container">
+      <p class="section-tag">What We Do</p>
+      <h2 class="section-title">Our Services</h2>
+      <div class="divider"></div>
+      <p class="section-lead">From undercover evaluations to detailed analytics, CoreFix delivers a full suite of business improvement services tailored to your industry.</p>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">📊</div>
+          <div class="service-num">01</div>
+          <h3>Service Evaluation</h3>
+          <p>We analyze your business by observing real customer interactions, identifying performance gaps before they affect your bottom line.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📈</div>
+          <div class="service-num">02</div>
+          <h3>Business Insights &amp; Reporting</h3>
+          <p>Detailed, data-driven reports with clear, actionable recommendations to improve efficiency and profitability.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🛠️</div>
+          <div class="service-num">03</div>
+          <h3>Solution &amp; Improvement Plans</h3>
+          <p>Practical strategies and step-by-step guidance to enhance customer satisfaction and team performance.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧠</div>
+          <div class="service-num">04</div>
+          <h3>Feedback &amp; Customer Research</h3>
+          <p>Understanding your customers better through structured surveys, focus groups, and behavioral studies.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🕵️</div>
+          <div class="service-num">05</div>
+          <h3>Mystery Shopping</h3>
+          <p>Undercover assessments that reveal the authentic customer experience at every single touchpoint.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🏆</div>
+          <div class="service-num">06</div>
+          <h3>Competitor Benchmarking</h3>
+          <p>Know exactly where you stand — and what you need to do to lead your market with confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="container" style="text-align:center;">
+      <p class="section-tag" style="color:var(--mg);">Let's talk</p>
+      <h2 class="section-title">Ready to Elevate Your Business?</h2>
+      <div class="divider" style="margin:20px auto 36px;"></div>
+      <a href="#" class="btn btn-primary" onclick="showPage('contact')">Request a Consultation →</a>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════ MYSTERY SHOPPING ══════════════ -->
+<div class="page" id="page-mystery">
+  <section class="section" style="margin-top:64px;">
+    <div class="container">
+      <div class="ms-hero">
+        <p style="color:var(--mg);font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;">Our Flagship Service</p>
+        <h2>🕵️ Mystery Shopping</h2>
+        <p>Also known as secret shopping — a proven method to measure quality of sales, service, job performance, and regulatory compliance. See your business the way your customers really do.</p>
+      </div>
+
+      <p class="section-tag">How It Works</p>
+      <h2 class="section-title">A Simple 4-Step Process</h2>
+      <div class="divider"></div>
+      <div class="ms-steps">
+        <div class="ms-step">
+          <div class="step-num">1</div>
+          <h4>Briefing &amp; Setup</h4>
+          <p>We work with you to define objectives, scenarios, and key performance indicators.</p>
+        </div>
+        <div class="ms-step">
+          <div class="step-num">2</div>
+          <h4>Shopper Assignment</h4>
+          <p>Carefully vetted mystery shoppers are briefed and dispatched to your locations.</p>
+        </div>
+        <div class="ms-step">
+          <div class="step-num">3</div>
+          <h4>Evaluation Visit</h4>
+          <p>Shoppers experience your service as real customers and document every detail.</p>
+        </div>
+        <div class="ms-step">
+          <div class="step-num">4</div>
+          <h4>Report &amp; Action Plan</h4>
+          <p>You receive a detailed report with scores, findings, and an improvement roadmap.</p>
+        </div>
+      </div>
+
+      <p class="section-tag">Why It Matters</p>
+      <h2 class="section-title">Key Benefits</h2>
+      <div class="divider"></div>
+      <div class="ms-benefits">
+        <div class="benefit"><div class="benefit-icon">✅</div><div><h4>Unbiased Feedback</h4><p>Real customer perspectives without the filter of manager awareness.</p></div></div>
+        <div class="benefit"><div class="benefit-icon">📉</div><div><h4>Reduce Lost Sales</h4><p>Identify exactly where and why customers leave without buying.</p></div></div>
+        <div class="benefit"><div class="benefit-icon">🎯</div><div><h4>Staff Development</h4><p>Pinpoint training needs and reward top performers with confidence.</p></div></div>
+        <div class="benefit"><div class="benefit-icon">📋</div><div><h4>Compliance Assurance</h4><p>Verify that your standards and regulations are actually being followed.</p></div></div>
+        <div class="benefit"><div class="benefit-icon">🔍</div><div><h4>Competitor Intelligence</h4><p>Benchmark your service against competitors using the same methodology.</p></div></div>
+        <div class="benefit"><div class="benefit-icon">📊</div><div><h4>Trend Tracking</h4><p>Repeat evaluations over time to measure improvement and sustain gains.</p></div></div>
+      </div>
+
+      <div style="text-align:center;margin-top:56px;">
+        <a href="#" class="btn btn-primary" onclick="showPage('contact')">Get a Mystery Shopping Quote</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════ CONTACT ══════════════ -->
+<div class="page" id="page-contact">
+  <section class="section" style="margin-top:64px;">
+    <div class="container">
+      <p class="section-tag">Get In Touch</p>
+      <h2 class="section-title">Connect With CoreFix</h2>
+      <div class="divider"></div>
+
+      <div class="contact-wrap">
+        <div class="contact-info">
+          <h3>Let's Start a Conversation</h3>
+          <p>Whether you're ready to launch a mystery shopping programme or just exploring options — we're here to help you find the right solution.</p>
+
+          <div class="contact-item">
+            <div class="c-icon">📧</div>
+            <div>
+              <div class="c-label">Email</div>
+              <div class="c-val">hello@corefix.com</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="c-icon">📱</div>
+            <div>
+              <div class="c-label">WhatsApp / Phone</div>
+              <div class="c-val">+91 98XXX XXXXX</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="c-icon">🌍</div>
+            <div>
+              <div class="c-label">Based In</div>
+              <div class="c-val">India — serving the region</div>
+            </div>
+          </div>
+
+          <div style="margin-top:36px;padding:28px;background:var(--mg-light);border-radius:8px;border-left:3px solid var(--mg);">
+            <p style="font-size:.9rem;color:#555;">⏱️ We typically respond within <strong style="color:var(--dp);">24 hours</strong> on business days. For urgent enquiries, WhatsApp is fastest.</p>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <p style="font-weight:600;color:var(--dp);font-size:1.05rem;margin-bottom:24px;">Send Us a Message</p>
+          <div class="form-row">
+            <div class="field"><label>First Name</label><input type="text" id="fname" placeholder="Rahul" /></div>
+            <div class="field"><label>Last Name</label><input type="text" id="lname" placeholder="Sharma" /></div>
+          </div>
+          <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="you@company.com" /></div>
+          <div class="field"><label>Company</label><input type="text" id="company" placeholder="Your Business Name" /></div>
+          <div class="field">
+            <label>Service of Interest</label>
+            <select id="service">
+              <option value="">Select a service...</option>
+              <option>Mystery Shopping</option>
+              <option>Service Evaluation</option>
+              <option>Business Insights &amp; Reporting</option>
+              <option>Customer Research</option>
+              <option>Competitor Benchmarking</option>
+              <option>Other / Multiple Services</option>
+            </select>
+          </div>
+          <div class="field"><label>Message</label><textarea id="message" placeholder="Tell us about your business and what you'd like to improve..."></textarea></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="submitForm()">Send Message →</button>
+          <div class="form-msg" id="formMsg"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/919800000000" class="wa" target="_blank" rel="noopener" title="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<footer>
+  <div class="footer-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('about')">About</a>
+    <a href="#" onclick="showPage('services')">Services</a>
+    <a href="#" onclick="showPage('mystery')">Mystery Shopping</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
+  </div>
+  <p>&copy; 2026 <strong>COREFIX</strong> Business Services. All Rights Reserved.</p>
+</footer>
+
+<script>
+  // ── Page Router ──
+  function showPage(id, linkEl) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pg = document.getElementById('page-' + id);
+    if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+
+    document.querySelectorAll('.nav-center a').forEach(a => a.classList.remove('active'));
+    if (linkEl) { linkEl.classList.add('active'); }
+    else {
+      document.querySelectorAll('.nav-center a').forEach(a => {
+        if (a.getAttribute('onclick') && a.getAttribute('onclick').includes("'" + id + "'")) a.classList.add('active');
+      });
+    }
+    // close mobile menu
+    document.getElementById('mainNav').classList.remove('nav-open');
+    document.getElementById('hamburger').classList.remove('open');
+    return false;
+  }
+
+  // intercept all showPage calls from nav so we also update active link
+  document.querySelectorAll('.nav-center a').forEach(a => {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('.nav-center a').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // ── Hamburger ──
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('mainNav').classList.toggle('nav-open');
+  });
+
+  // ── Contact Form ──
+  function submitForm() {
+    const fname = document.getElementById('fname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const msg   = document.getElementById('message').value.trim();
+    const el    = document.getElementById('formMsg');
+    el.className = 'form-msg';
+    if (!fname || !email || !msg) {
+      el.className = 'form-msg error';
+      el.textContent = 'Please fill in your name, email, and message.';
+      return;
+    }
+    el.className = 'form-msg success';
+    el.textContent = 'Thank you, ' + fname + '! The CoreFix team will be in touch within 24 hours.';
+    ['fname','lname','email','company','service','message'].forEach(id => {
+      const f = document.getElementById(id);
+      if(f) f.value = '';
+    });
+  }
+</script>
+</body>
+</html>
